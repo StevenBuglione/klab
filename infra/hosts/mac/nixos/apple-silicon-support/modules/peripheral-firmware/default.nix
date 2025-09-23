@@ -5,7 +5,7 @@
   ...
 }:
 {
-  hardware.asahi.peripheralFirmwareDirectory = "/boot/asahi";
+  config.hardware.asahi.peripheralFirmwareDirectory = "/boot/asahi";
   config = lib.mkIf config.hardware.asahi.enable {
     assertions = lib.mkIf config.hardware.asahi.extractPeripheralFirmware [
       {
