@@ -27,6 +27,8 @@
     mode = "rootful";
   };
 
+  users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
+
   # Asahi firmware note:
   # hardware.asahi.peripheralFirmwareDirectory = ./firmware;  # if you vendor it for pure builds
 

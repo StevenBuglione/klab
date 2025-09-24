@@ -22,11 +22,11 @@
   klab.hummingbot.docker = {
     enable = true;
     user = "hummingbot";
-    mode = "rootless";
+    mode = "rootfull";
   };
 
   # Extend user groups specific to Dell
-  users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" ];
+  users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
 
   # USB NIC / power server extras (unchanged from before)
   hardware.enableAllFirmware = true;

@@ -9,7 +9,7 @@ in
     description = "Steven Buglione";
     shell = defaultShell;
     # Keep minimal here; host files can append:
-    extraGroups = lib.mkDefault [ "wheel"];
+    extraGroups = lib.mkDefault [ "wheel" "docker"];
   };
 
     users.users."hummingbot".openssh.authorizedKeys.keys = [
