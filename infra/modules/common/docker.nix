@@ -111,32 +111,6 @@ in
 
       virtualisation.docker = {
         enable = true;
-
-        # daemon.json hardened defaults
-        daemon = {
-          settings = {
-            # Security hardening
-            "userns-remap" = "dockremap:dockremap";  # map container root → unprivileged ids
-            "icc" = false;                            # disable inter-container comm on default bridge
-            "no-new-privileges" = true;
-
-            # Stability & observability
-            "live-restore" = true;
-            "log-driver" = "json-file";
-            "log-opts" = {
-              "max-size" = "10m";
-              "max-file" = "3";
-            };
-            "default-ulimits" = {
-              "nofile" = { "Name" = "nofile"; "Hard" = 1048576; "Soft" = 1048576; };
-            };
-
-            # Avoid address clashes for user-defined bridges (adjust as you like)
-            "default-address-pools" = [
-              { "base" = "10.248.0.0/16"; "size" = 24; }
-            ];
-          } // cfg.extraDaemonSettings;
-        };
       };
 
       # Allow the Hummingbot user to talk to the rootful daemon
