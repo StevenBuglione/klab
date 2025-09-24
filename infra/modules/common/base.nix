@@ -10,7 +10,6 @@
   boot.loader.systemd-boot = {
     enable = true;
     configurationLimit = 20;
-    defaultEntry = "latest";   # always boot the newest gen
     editor = true;
   };
   boot.loader.timeout = 5; 
