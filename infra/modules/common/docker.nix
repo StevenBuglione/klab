@@ -86,7 +86,7 @@ in
           ];
           ExecStart = "${pkgs.docker}/bin/dockerd-rootless.sh";
           Restart = "always";
-          RestartSec = 2s;
+          RestartSec = "2s";
 
           # Hardening (safe defaults)
           NoNewPrivileges = true;
