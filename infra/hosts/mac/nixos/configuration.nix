@@ -24,7 +24,7 @@
   klab.hummingbot.docker = {
     enable = true;
     user = "hummingbot";
-    mode = "rootless";
+    mode = "rootful";
   };
 
   # Asahi firmware note:
