@@ -27,33 +27,25 @@
     mode = "rootful";
   };
 
-  boot.loader.systemd-boot = {
-    enable = true;
+  # Replace systemd-boot with GRUB (UEFI)
+  boot.loader = {
+    # Keep generations pruned on the ESP
     configurationLimit = 20;
-    editor = true;
 
-    # Use fully qualified binaries — do NOT rely on PATH here
-    extraInstallCommands = ''
-      set -eu
-      conf=/boot/loader/loader.conf
+    # Don’t write NVRAM vars on Asahi; install BOOTAA64.EFI instead
+    efi.canTouchEfiVariables = false;
 
-      ${pkgs.coreutils}/bin/install -d -m 0755 /boot/loader
-      ${pkgs.coreutils}/bin/touch "$conf"
+    grub = {
+      enable = true;
+      efiSupport = true;
+      devices = [ "nodev" ];          # UEFI install (no MBR)
+      efiInstallAsRemovable = true;   # installs to /EFI/BOOT/BOOTAA64.EFI
+      # timeout can also be set here if preferred:
+      # timeout = 5;
+    };
 
-      # default -> nixos (dynamic "latest")
-      if ${pkgs.gnugrep}/bin/grep -q '^default ' "$conf"; then
-        ${pkgs.gnused}/bin/sed -i -E 's/^default .*/default nixos/' "$conf"
-      else
-        echo 'default nixos' | ${pkgs.coreutils}/bin/tee -a "$conf" >/dev/null
-      fi
-
-      # timeout -> 5
-      if ${pkgs.gnugrep}/bin/grep -q '^timeout ' "$conf"; then
-        ${pkgs.gnused}/bin/sed -i -E 's/^timeout .*/timeout 5/' "$conf"
-      else
-        echo 'timeout 5' | ${pkgs.coreutils}/bin/tee -a "$conf" >/dev/null
-      fi
-    '';
+    # systemd-boot was here before; ensure it’s off
+    # systemd-boot.enable = lib.mkForce false;
   };
 
   # If available on your channel this also sets the menu timeout; harmless if ignored:
