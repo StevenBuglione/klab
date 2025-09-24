@@ -55,9 +55,6 @@
       fi
     '';
   };
-# Harmless if ignored on your channel; menu is handled above anyway
-boot.loader.timeout = 5;
-
 
   # If available on your channel this also sets the menu timeout; harmless if ignored:
   boot.loader.timeout = 5;
