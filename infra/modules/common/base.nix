@@ -9,10 +9,13 @@
   # Boot
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 20;
-    editor = true;
+    configurationLimit = 20;  # optional
+    extraConfig = ''
+      default nixos
+      timeout 5
+    '';
   };
-  boot.loader.timeout = 5; 
+
 
 
 
