@@ -21,6 +21,12 @@
     };
   };
 
+  klab.hummingbot.docker = {
+    enable = true;
+    user = "hummingbot";
+    mode = "rootless";
+  };
+
   # Asahi firmware note:
   # hardware.asahi.peripheralFirmwareDirectory = ./firmware;  # if you vendor it for pure builds
 

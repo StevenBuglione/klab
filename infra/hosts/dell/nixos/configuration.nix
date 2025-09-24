@@ -19,6 +19,12 @@
     };
   };
 
+  klab.hummingbot.docker = {
+    enable = true;
+    user = "hummingbot";
+    mode = "rootless";
+  };
+
   # Extend user groups specific to Dell
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" ];
 
