@@ -6,19 +6,6 @@
   nixpkgs.config.allowUnfree = true;
 
 
-  # Boot
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 20;  # optional
-    extraConfig = ''
-      default nixos
-      timeout 5
-    '';
-  };
-
-
-
-
   # Locale & time
   time.timeZone = lib.mkDefault "America/New_York";
   i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
