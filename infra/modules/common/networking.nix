@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
   inherit (lib) mkOption mkEnableOption types mkIf mkMerge;
 in
