@@ -105,8 +105,8 @@ in
         isSystemUser = true;
         description = "Docker remap user";
         group = "dockremap";
-        subUidRanges = [ { start = 100000; count = 65536; } ];
-        subGidRanges = [ { start = 100000; count = 65536; } ];
+        subUidRanges = [ { startUid = 100000; count = 65536; } ];
+        subGidRanges = [ { startGid = 100000; count = 65536; } ];
       };
 
       virtualisation.docker = {
