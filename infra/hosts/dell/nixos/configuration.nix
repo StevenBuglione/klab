@@ -25,6 +25,12 @@
     mode = "rootful";
   };
 
+  boot.loader.systemd-boot = {
+    enable = true;
+    configurationLimit = 20;
+    editor = true;
+  };
+
   # Extend user groups specific to Dell
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
 
