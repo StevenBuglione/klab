@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  inherit (lib) mkEnableOption mkOption types mkIf mkMerge;
+  inherit (lib) mkEnableOption mkOption types mkIf mkMerge optionals mkAfter mkDefault;
   cfg = config.klab.hummingbot.docker;
 in
 {
@@ -47,22 +47,23 @@ in
     {
       environment.systemPackages =
         (with pkgs; [ docker ]) ++
-        lib.optionals cfg.installCompose (with pkgs; [ docker-compose ]) ++
-        lib.optionals cfg.installBuildx  (with pkgs; [ docker-buildx ]);
+        optionals cfg.installCompose (with pkgs; [ docker-compose ]) ++
+        optionals cfg.installBuildx  (with pkgs; [ docker-buildx ]);
     }
 
     #############################################
     # Rootless mode (recommended)
     #############################################
     (mkIf (cfg.mode == "rootless") {
+      # Rootless engine for the specified user; sets DOCKER_HOST in login shells
       virtualisation.docker.rootless = {
         enable = true;
-        setSocketVariable = true;   # sets DOCKER_HOST for that user’s login shells
+        setSocketVariable = true;
       };
 
-      # Ensure the user exists and that lingering is on
+      # Ensure the user exists and that lingering is on so user services run at boot
       users.users.${cfg.user} = {
-        isNormalUser = lib.mkDefault true;
+        isNormalUser = mkDefault true;
         linger = true;
       };
 
@@ -86,16 +87,28 @@ in
         };
       };
 
-      # Optional: allow binding low ports in rootless
+      # Optional: allow binding low ports in rootless (0 disables the restriction)
       boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
+
+      # Make sure the system (rootful) socket does not hijack the client unintentionally
+      systemd.services.docker.wantedBy = lib.mkForce [ ];
+      systemd.sockets.docker.wantedBy  = lib.mkForce [ ];
     })
-
-
 
     #############################################
     # Rootful + userns-remap (hardened)
     #############################################
     (mkIf (cfg.mode == "rootful") {
+      # system remap user/group with subordinate ID ranges
+      users.groups.dockremap = { };
+      users.users.dockremap = {
+        isSystemUser = true;
+        description = "Docker remap user";
+        group = "dockremap";
+        subUidRanges = [ { start = 100000; count = 65536; } ];
+        subGidRanges = [ { start = 100000; count = 65536; } ];
+      };
+
       virtualisation.docker = {
         enable = true;
 
@@ -103,9 +116,9 @@ in
         daemon = {
           settings = {
             # Security hardening
-            "userns-remap" = "default";           # map container root → subuid/subgid
-            "icc" = false;                        # disable inter-container comm on default bridge
-            "no-new-privileges" = true;           # requires recent dockerd; safer default
+            "userns-remap" = "dockremap:dockremap";  # map container root → unprivileged ids
+            "icc" = false;                            # disable inter-container comm on default bridge
+            "no-new-privileges" = true;
 
             # Stability & observability
             "live-restore" = true;
@@ -126,10 +139,8 @@ in
         };
       };
 
-      # In rootful mode, add the user to the docker group (so they can run docker without sudo)
-      users.users.${cfg.user}.extraGroups = lib.mkAfter [ "docker" ];
-
-      # Optional: firewall stays closed by default; only open what you publish intentionally.
+      # Allow the Hummingbot user to talk to the rootful daemon
+      users.users.${cfg.user}.extraGroups = mkAfter [ "docker" ];
     })
 
     #############################################
@@ -144,19 +155,17 @@ in
         };
       };
       systemd.services."docker-prune-weekly" = {
-        serviceConfig = {
-          Type = "oneshot";
-          # Rootless vs rootful: try both; failures are fine.
-        };
+        serviceConfig = { Type = "oneshot"; };
         script = ''
           set -eu
+
           # Rootless prune (if the user has a rootless daemon)
-          if sudo -u ${cfg.user} -H sh -lc 'command -v docker >/dev/null && docker info >/dev/null 2>&1'; then
+          if sudo -u ${cfg.user} -H sh -lc 'command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1'; then
             sudo -u ${cfg.user} -H sh -lc 'docker system prune -af --volumes || true'
           fi
 
-          # Rootful prune (requires docker group or sudo)
-          if command -v docker >/dev/null; then
+          # Rootful prune (if system docker is available)
+          if command -v docker >/dev/null 2>&1; then
             docker system prune -af --volumes || true
           fi
         '';
