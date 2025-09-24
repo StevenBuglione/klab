@@ -29,7 +29,7 @@
         ./modules/common/laptop-as-server.nix 
         ./modules/common/networking.nix 
         ./modules/common/updates.nix
-        ./modules/common/docker-hummingbot.nix
+        ./modules/common/docker.nix
       ];  
 
       dellModules = commonModules ++ [
