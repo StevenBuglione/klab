@@ -32,17 +32,6 @@
     vim htop git openssh
   ];
 
-  boot.loader = {
-    efi.canTouchEfiVariables = false;
-
-    grub = {
-      enable = true;
-      efiSupport = true;
-      devices = [ "nodev" ];
-      efiInstallAsRemovable = true;
-      timeout = 5;                
-    };
-  };
 
   boot.loader.timeout = 5;
 

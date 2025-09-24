@@ -3,6 +3,10 @@
   imports = [ ./hardware-configuration.nix ];
 
   klab.laptopAsServer.enable = true;
+  
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
 
   # Static IP on the Dell
   klab.network = {
@@ -24,6 +28,8 @@
     user = "hummingbot";
     mode = "rootful";
   };
+
+
 
   # Extend user groups specific to Dell
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];

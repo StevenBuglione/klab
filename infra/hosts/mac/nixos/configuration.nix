@@ -7,6 +7,18 @@
 
   klab.laptopAsServer.enable = false;  # it's a desktop-style server; flip if needed
 
+  boot.loader = {
+    efi.canTouchEfiVariables = false;
+
+    grub = {
+      enable = true;
+      efiSupport = true;
+      devices = [ "nodev" ];
+      efiInstallAsRemovable = true;
+      timeout = 5;                
+    };
+  };
+
   klab.network = {
     hostName = "mac";
     useNetworkManager = false;         # simple static
