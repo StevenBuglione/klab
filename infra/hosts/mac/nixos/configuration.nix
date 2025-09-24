@@ -25,6 +25,8 @@
   # hardware.asahi.peripheralFirmwareDirectory = ./firmware;  # if you vendor it for pure builds
 
   environment.systemPackages = with pkgs; [ ethtool usbutils pciutils ];
+  
+  system.autoUpgrade.flags = [ "--update-input" "nixpkgs" "--commit-lock-file" "--impure" ];
   system.stateVersion = "25.11";
 }
 

@@ -26,8 +26,9 @@
         ./modules/common/base.nix
         ./modules/common/users.nix
         ./modules/common/ssh.nix
-        ./modules/common/laptop-as-server.nix   # <-- add
+        ./modules/common/laptop-as-server.nix 
         ./modules/common/networking.nix 
+        ./modules/common/updates.nix
       ];  
 
       dellModules = commonModules ++ [
