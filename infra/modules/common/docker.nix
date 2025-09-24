@@ -55,51 +55,41 @@ in
     # Rootless mode (recommended)
     #############################################
     (mkIf (cfg.mode == "rootless") {
-      # Rootless engine for the specified user
       virtualisation.docker.rootless = {
         enable = true;
-        setSocketVariable = true;   # exports DOCKER_HOST in that user's login shells
+        setSocketVariable = true;   # sets DOCKER_HOST for that user’s login shells
       };
 
-      # Ensure the user exists (merges safely if already defined elsewhere)
+      # Ensure the user exists and that lingering is on
       users.users.${cfg.user} = {
         isNormalUser = lib.mkDefault true;
+        linger = true;
       };
 
-      # Keep the user's systemd --user instance running even when not logged in
-      services.logind.lingerUsers = lib.mkAfter [ cfg.user ];
-
-      # Declarative user service that runs the rootless dockerd
-      # (This mirrors what 'dockerd-rootless-setuptool.sh install' would do,
-      #  but in a NixOS-friendly, reproducible way.)
+      # User-level daemon tied to systemd --user (autostarts thanks to lingering)
       systemd.user.services."docker-rootless" = {
         description = "Rootless Docker daemon";
-        # Start for all users; in practice only the lingered user will keep it running
         wantedBy = [ "default.target" ];
-
         serviceConfig = {
           Type = "notify";
-          # Helpful environment for rootless networking
           Environment = [
             "DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns"
-            # XDG_RUNTIME_DIR is already set in user services (%t), no need to override
           ];
           ExecStart = "${pkgs.docker}/bin/dockerd-rootless.sh";
           Restart = "always";
           RestartSec = "2s";
-
-          # Hardening (safe defaults)
           NoNewPrivileges = true;
           PrivateTmp = true;
           ProtectHome = "read-only";
           ProtectSystem = "strict";
-          StateDirectory = "docker";  # creates ~/.local/state/docker for this service if needed
+          StateDirectory = "docker";
         };
       };
 
-      # Optional: allow binding low ports in rootless (0 disables the restriction)
+      # Optional: allow binding low ports in rootless
       boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
     })
+
 
 
     #############################################
