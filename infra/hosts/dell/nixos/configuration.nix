@@ -22,7 +22,7 @@
   klab.hummingbot.docker = {
     enable = true;
     user = "hummingbot";
-    mode = "rootlful";
+    mode = "rootful";
   };
 
   # Extend user groups specific to Dell
