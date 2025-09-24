@@ -26,7 +26,7 @@
   klab.hummingbot.docker = {
     enable = true;
     user = "hummingbot";
-    mode = "rootful";
+    mode = "rootless";
   };
 
 
