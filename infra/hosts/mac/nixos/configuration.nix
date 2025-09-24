@@ -29,33 +29,35 @@
 
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 20;   # show more entries
+    configurationLimit = 20;
     editor = true;
 
-    # Older channels: use this to enforce loader.conf content on the ESP
+    # Use fully qualified binaries — do NOT rely on PATH here
     extraInstallCommands = ''
       set -eu
       conf=/boot/loader/loader.conf
 
-      # ensure file exists
-      install -d -m 0755 /boot/loader
-      touch "$conf"
+      ${pkgs.coreutils}/bin/install -d -m 0755 /boot/loader
+      ${pkgs.coreutils}/bin/touch "$conf"
 
-      # set default to dynamic "nixos" (latest entry), not a pinned generation
-      if grep -q '^default ' "$conf"; then
-        sed -i -E 's/^default .*/default nixos/' "$conf"
+      # default -> nixos (dynamic "latest")
+      if ${pkgs.gnugrep}/bin/grep -q '^default ' "$conf"; then
+        ${pkgs.gnused}/bin/sed -i -E 's/^default .*/default nixos/' "$conf"
       else
-        echo 'default nixos' >> "$conf"
+        echo 'default nixos' | ${pkgs.coreutils}/bin/tee -a "$conf" >/dev/null
       fi
 
-      # set a visible menu timeout
-      if grep -q '^timeout ' "$conf"; then
-        sed -i -E 's/^timeout .*/timeout 5/' "$conf"
+      # timeout -> 5
+      if ${pkgs.gnugrep}/bin/grep -q '^timeout ' "$conf"; then
+        ${pkgs.gnused}/bin/sed -i -E 's/^timeout .*/timeout 5/' "$conf"
       else
-        echo 'timeout 5' >> "$conf"
+        echo 'timeout 5' | ${pkgs.coreutils}/bin/tee -a "$conf" >/dev/null
       fi
     '';
   };
+# Harmless if ignored on your channel; menu is handled above anyway
+boot.loader.timeout = 5;
+
 
   # If available on your channel this also sets the menu timeout; harmless if ignored:
   boot.loader.timeout = 5;
