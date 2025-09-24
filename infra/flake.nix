@@ -22,11 +22,17 @@
           inherit modules;
         };
 
-      dellModules = [
+      commonModules = [
+        ./modules/common/base.nix
+        ./modules/common/users.nix
+        ./modules/common/ssh.nix
+      ];  
+
+      dellModules = commonModules ++ [
         ./hosts/dell/nixos/configuration.nix
       ];
 
-      macModules = [
+      macModules = commonModules ++ [
         ./hosts/mac/nixos/configuration.nix
       ];
 
