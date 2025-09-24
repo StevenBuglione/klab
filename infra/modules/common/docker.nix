@@ -58,24 +58,49 @@ in
       # Rootless engine for the specified user
       virtualisation.docker.rootless = {
         enable = true;
-        setSocketVariable = true;   # makes DOCKER_HOST available in shells
-        # Note: rootless will automatically bind to $XDG_RUNTIME_DIR/docker.sock for that user
+        setSocketVariable = true;   # exports DOCKER_HOST in that user's login shells
       };
 
-      # Do NOT add the user to the docker group in rootless mode.
+      # Ensure the user exists (merges safely if already defined elsewhere)
       users.users.${cfg.user} = {
-        # ensure user exists; if defined elsewhere, this merges safely
         isNormalUser = lib.mkDefault true;
       };
 
-      # Helpful sysctls for many container workloads (read-only safe defaults)
-      boot.kernel.sysctl = {
-        "net.ipv4.ip_unprivileged_port_start" = 0; # allow rootless to bind low ports if needed (can still use host firewall)
+      # Keep the user's systemd --user instance running even when not logged in
+      services.logind.lingerUsers = lib.mkAfter [ cfg.user ];
+
+      # Declarative user service that runs the rootless dockerd
+      # (This mirrors what 'dockerd-rootless-setuptool.sh install' would do,
+      #  but in a NixOS-friendly, reproducible way.)
+      systemd.user.services."docker-rootless" = {
+        description = "Rootless Docker daemon";
+        # Start for all users; in practice only the lingered user will keep it running
+        wantedBy = [ "default.target" ];
+
+        serviceConfig = {
+          Type = "notify";
+          # Helpful environment for rootless networking
+          Environment = [
+            "DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER=slirp4netns"
+            # XDG_RUNTIME_DIR is already set in user services (%t), no need to override
+          ];
+          ExecStart = "${pkgs.docker}/bin/dockerd-rootless.sh";
+          Restart = "always";
+          RestartSec = 2s;
+
+          # Hardening (safe defaults)
+          NoNewPrivileges = true;
+          PrivateTmp = true;
+          ProtectHome = "read-only";
+          ProtectSystem = "strict";
+          StateDirectory = "docker";  # creates ~/.local/state/docker for this service if needed
+        };
       };
 
-      # Firewall: keep defaults; hummingbot usually needs only egress.
-      # If you later publish ports, open them explicitly in your host config.
+      # Optional: allow binding low ports in rootless (0 disables the restriction)
+      boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
     })
+
 
     #############################################
     # Rootful + userns-remap (hardened)
