@@ -23,11 +23,11 @@
     };
   };
 
-  klab.hummingbot.docker = {
-    enable = true;
-    user = "hummingbot";
-    mode = "rootless";
-  };
+  # klab.hummingbot.docker = {
+  #   enable = true;
+  #   user = "hummingbot";
+  #   mode = "rootless";
+  # };
 
 
 
