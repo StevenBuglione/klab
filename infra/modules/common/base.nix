@@ -32,6 +32,20 @@
     vim htop git openssh
   ];
 
+  boot.loader = {
+    efi.canTouchEfiVariables = false;
+
+    grub = {
+      enable = true;
+      efiSupport = true;
+      devices = [ "nodev" ];
+      efiInstallAsRemovable = true;
+      timeout = 5;                
+    };
+  };
+
+  boot.loader.timeout = 5;
+
   # Sudo: no password for wheel (override per-host if you like)
   security.sudo.wheelNeedsPassword = lib.mkDefault false;
 }

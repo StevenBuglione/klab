@@ -27,28 +27,7 @@
     mode = "rootful";
   };
 
-  boot.loader = {
-    efi.canTouchEfiVariables = false;
-
-    grub = {
-      enable = true;
-      efiSupport = true;
-      devices = [ "nodev" ];
-      efiInstallAsRemovable = true;
-      timeout = 5;                # GRUB’s timeout lives here
-    };
-
-    # REMOVE this line – it does not exist for GRUB:
-    # configurationLimit = 20;
-    # Also remove any top-level boot.loader.timeout you had.
-  };
-  # If available on your channel this also sets the menu timeout; harmless if ignored:
-  boot.loader.timeout = 5;
-
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
-
-  # Asahi firmware note:
-  # hardware.asahi.peripheralFirmwareDirectory = ./firmware;  # if you vendor it for pure builds
 
   environment.systemPackages = with pkgs; [ ethtool usbutils pciutils ];
   
