@@ -27,27 +27,21 @@
     mode = "rootful";
   };
 
-  # Replace systemd-boot with GRUB (UEFI)
   boot.loader = {
-    # Keep generations pruned on the ESP
-    configurationLimit = 20;
-
-    # Don’t write NVRAM vars on Asahi; install BOOTAA64.EFI instead
     efi.canTouchEfiVariables = false;
 
     grub = {
       enable = true;
       efiSupport = true;
-      devices = [ "nodev" ];          # UEFI install (no MBR)
-      efiInstallAsRemovable = true;   # installs to /EFI/BOOT/BOOTAA64.EFI
-      # timeout can also be set here if preferred:
-      # timeout = 5;
+      devices = [ "nodev" ];
+      efiInstallAsRemovable = true;
+      timeout = 5;                # GRUB’s timeout lives here
     };
 
-    # systemd-boot was here before; ensure it’s off
-    # systemd-boot.enable = lib.mkForce false;
+    # REMOVE this line – it does not exist for GRUB:
+    # configurationLimit = 20;
+    # Also remove any top-level boot.loader.timeout you had.
   };
-
   # If available on your channel this also sets the menu timeout; harmless if ignored:
   boot.loader.timeout = 5;
 
