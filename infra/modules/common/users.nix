@@ -20,16 +20,16 @@ in
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIADXEW0ESKUfvgzAYIuHH/Rehcvhm8j4op7VlpLClfvC" 
   ];
 
-    # Ensure newuidmap/newgidmap are setuid (so they can write uid_map/gid_map)
+  # make newuidmap/newgidmap setuid
   security.wrappers.newuidmap = {
-    source = "${pkgs.uidmap}/bin/newuidmap";
+    source = "${pkgs.shadow}/bin/newuidmap";
     owner = "root"; group = "root"; setuid = true;
   };
   security.wrappers.newgidmap = {
-    source = "${pkgs.uidmap}/bin/newgidmap";
+    source = "${pkgs.shadow}/bin/newgidmap";
     owner = "root"; group = "root"; setuid = true;
   };
-
+  
   # Allow unprivileged user namespaces (belt & suspenders)
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
 

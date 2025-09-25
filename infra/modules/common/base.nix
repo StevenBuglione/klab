@@ -34,7 +34,7 @@
     slirp4netns
     fuse-overlayfs
     ethtool usbutils pciutils
-    uidmap
+    shadow
   ];
 
 
