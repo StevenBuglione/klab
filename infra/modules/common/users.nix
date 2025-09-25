@@ -10,10 +10,11 @@ in
     shell = defaultShell;
     # Keep minimal here; host files can append:
     extraGroups = lib.mkDefault [ "wheel"];
+    linger = true;
   };
 
     users.users."hummingbot".openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIADXEW0ESKUfvgzAYIuHH/Rehcvhm8j4op7VlpLClfvC" 
   ];
-  linger = true;
+
 }
