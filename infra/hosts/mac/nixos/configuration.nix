@@ -33,23 +33,20 @@
     };
   };
 
-  # Enable rootless Docker
   virtualisation.docker.rootless = {
     enable = true;
-    # export DOCKER_HOST to your session so `docker` talks to the user socket
     setSocketVariable = true;
   };
 
-  # Make sure the system (rootful) Docker is fully OFF to avoid conflicts
+  # ensure rootful units don't start
   virtualisation.docker.enable = lib.mkForce false;
   systemd.services.docker.enable = lib.mkForce false;
   systemd.sockets.docker.enable  = lib.mkForce false;
 
-  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
+
 
   users.users.hummingbot.extraGroups = [ "wheel" ];
 
-  environment.systemPackages = with pkgs; [ ethtool usbutils pciutils ];
   
   system.autoUpgrade.flags = [ "--update-input" "nixpkgs" "--commit-lock-file" "--impure" ];
   system.stateVersion = "25.11";
