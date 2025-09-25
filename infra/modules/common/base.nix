@@ -37,6 +37,10 @@
     shadow
   ];
 
+  environment.etc."gai.conf".text = ''
+    precedence ::ffff:0:0/96  100
+  '';
+
 
   boot.loader.timeout = 5;
 
