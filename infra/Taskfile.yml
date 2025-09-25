@@ -1,7 +1,7 @@
 version: "3"
 
 vars:
-  SSH_USER: "{{.SSH_USER | default `hummingbot`}}"
+  SSH_USER: "{{.SSH_USER | default `sys-admin`}}"
   MAC_HOST: "{{.MAC_HOST | default `10.10.10.5`}}"
   DELL_HOST: "{{.DELL_HOST | default `10.10.10.3`}}"
   KEY_PATH: "{{.KEY_PATH | default `~/.ssh/full-access-ssh-key`}}"

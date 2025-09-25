@@ -4,6 +4,19 @@ let
   defaultShell = pkgs.bashInteractive;
 in
 {
+
+  users.users."sys-admin" = {
+    isNormalUser = true;
+    description  = "Sysadmin account";
+    shell        = pkgs.bashInteractive;
+    extraGroups  = [ "wheel" "networkmanager" ];  
+    linger       = true;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIADXEW0ESKUfvgzAYIuHH/Rehcvhm8j4op7VlpLClfvC"
+    ];
+  };
+
+
   users.users.hummingbot = {
     isNormalUser = true;
     description = "Steven Buglione";
@@ -14,11 +27,13 @@ in
 
     subUidRanges = [ { startUid = 100000; count = 65536; } ];
     subGidRanges = [ { startGid = 100000; count = 65536; } ];
+
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIADXEW0ESKUfvgzAYIuHH/Rehcvhm8j4op7VlpLClfvC" 
+    ];
   };
 
-    users.users."hummingbot".openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIADXEW0ESKUfvgzAYIuHH/Rehcvhm8j4op7VlpLClfvC" 
-  ];
+
 
   # make newuidmap/newgidmap setuid
   security.wrappers.newuidmap = {
