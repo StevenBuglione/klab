@@ -133,7 +133,7 @@ in
           "no-new-privileges" = true;
           "userns-remap" = "dockremap:dockremap";
 
-          "live-restore" = true;
+          "live-restore" = false;
           "log-driver" = "json-file";
           "log-opts" = { "max-size" = "10m"; "max-file" = "3"; };
           "default-ulimits" = {
