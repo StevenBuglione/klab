@@ -31,6 +31,8 @@
     iproute2 iputils
     vim htop git openssh 
     docker
+    slirp4netns
+    fuse-overlayfs
   ];
 
 
