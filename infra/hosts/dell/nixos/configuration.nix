@@ -23,6 +23,16 @@
     };
   };
 
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+
+  # ensure rootful units don't start
+  virtualisation.docker.enable = lib.mkForce false;
+  systemd.services.docker.enable = lib.mkForce false;
+  systemd.sockets.docker.enable  = lib.mkForce false;
+
 
   # Extend user groups specific to Dell
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
