@@ -1,0 +1,68 @@
+version: "3"
+
+vars:
+  SSH_USER: "{{.SSH_USER | default `hummingbot`}}"
+  MAC_HOST: "{{.MAC_HOST | default `10.10.10.5`}}"
+  DELL_HOST: "{{.DELL_HOST | default `10.10.10.3`}}"
+  KEY_PATH: "{{.KEY_PATH | default `~/.ssh/full-access-ssh-key`}}"
+  SSH_OPTS: "-i {{.KEY_PATH}} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+  RSYNC_EXCLUDES: "--exclude '.git' --exclude 'result*' --exclude '.direnv' --exclude 'node_modules'"
+
+tasks:
+  _sync:
+    internal: true
+    cmds:
+      - >
+        rsync -avh --delete {{.RSYNC_EXCLUDES}}
+        -e "ssh {{.SSH_OPTS}}"
+        --rsync-path='mkdir -p ~/.config/nixos && rsync'
+        ./  {{.SSH_USER}}@{{.HOST}}:~/.config/nixos/
+
+  # ---- MAC (Apple Silicon) ----
+  sync:mac:
+    desc: "Sync current working tree to MAC:~/.config/nixos"
+    cmds:
+      - task: _sync
+        vars: { HOST: "{{.MAC_HOST}}" }
+
+  deploy:mac:
+    desc: "Sync + rebuild on MAC (uses --impure)"
+    cmds:
+      - task: sync:mac
+      - ssh.exe {{.SSH_USER}}@{{.MAC_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#mac --impure'
+
+  rollback:mac:
+    desc: "Rollback MAC to previous gen (remote)"
+    cmds:
+      - ssh.exe {{.SSH_USER}}@{{.MAC_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+
+  # ---- DELL (x86_64) ----
+  sync:dell:
+    desc: "Sync current working tree to DELL:~/.config/nixos"
+    cmds:
+      - task: _sync
+        vars: { HOST: "{{.DELL_HOST}}" }
+
+  deploy:dell:
+    desc: "Sync + rebuild on DELL"
+    cmds:
+      - task: sync:dell
+      - ssh.exe {{.SSH_USER}}@{{.DELL_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#dell'
+
+  rollback:dell:
+    desc: "Rollback DELL to previous gen (remote)"
+    cmds:
+      - ssh.exe {{.SSH_USER}}@{{.DELL_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+
+  # ---- Both ----
+  sync:
+    desc: "Sync to both hosts"
+    deps: [sync:mac, sync:dell]
+
+  deploy:
+    desc: "Sync + rebuild on both (MAC impure)"
+    deps: [deploy:mac, deploy:dell]
+
+  rollback:
+    desc: "Rollback both hosts"
+    deps: [rollback:mac, rollback:dell]
