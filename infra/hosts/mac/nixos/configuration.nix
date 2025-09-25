@@ -33,11 +33,11 @@
     };
   };
 
-  klab.hummingbot.docker = {
-    enable = true;
-    user = "hummingbot";
-    mode = "rootful";
-  };
+  # klab.hummingbot.docker = {
+  #   enable = true;
+  #   user = "hummingbot";
+  #   mode = "rootful";
+  # };
 
   users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
 
