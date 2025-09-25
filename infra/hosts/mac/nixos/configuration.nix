@@ -49,7 +49,7 @@
 
   users.users.hummingbot.extraGroups = [ "wheel" ];
 
-  environment.systemPackages = with pkgs; [ ethtool usbutils pciutils docker ];
+  environment.systemPackages = with pkgs; [ ethtool usbutils pciutils ];
   
   system.autoUpgrade.flags = [ "--update-input" "nixpkgs" "--commit-lock-file" "--impure" ];
   system.stateVersion = "25.11";

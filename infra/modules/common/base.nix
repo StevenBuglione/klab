@@ -29,7 +29,8 @@
     bashInteractive
     curl wget rsync
     iproute2 iputils
-    vim htop git openssh
+    vim htop git openssh 
+    docker
   ];
 
 
