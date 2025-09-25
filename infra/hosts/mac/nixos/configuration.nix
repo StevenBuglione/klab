@@ -33,15 +33,23 @@
     };
   };
 
-  klab.hummingbot.docker = {
+  # Enable rootless Docker
+  virtualisation.docker.rootless = {
     enable = true;
-    user = "hummingbot";
-    mode = "rootless";
+    # export DOCKER_HOST to your session so `docker` talks to the user socket
+    setSocketVariable = true;
   };
 
-  users.users.hummingbot.extraGroups = [ "wheel" "networkmanager" "docker" ];
+  # Make sure the system (rootful) Docker is fully OFF to avoid conflicts
+  virtualisation.docker.enable = lib.mkForce false;
+  systemd.services.docker.enable = lib.mkForce false;
+  systemd.sockets.docker.enable  = lib.mkForce false;
 
-  environment.systemPackages = with pkgs; [ ethtool usbutils pciutils ];
+  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 0;
+
+  users.users.hummingbot.extraGroups = [ "wheel" ];
+
+  environment.systemPackages = with pkgs; [ ethtool usbutils pciutils docker ];
   
   system.autoUpgrade.flags = [ "--update-input" "nixpkgs" "--commit-lock-file" "--impure" ];
   system.stateVersion = "25.11";
