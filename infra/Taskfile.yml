@@ -14,7 +14,7 @@ tasks:
     cmds:
       - >
         rsync -avh --delete {{.RSYNC_EXCLUDES}}
-        -e "ssh {{.SSH_OPTS}}"
+        -e "ssh.exe {{.SSH_OPTS}}"
         --rsync-path='mkdir -p ~/.config/nixos && rsync'
         ./  {{.SSH_USER}}@{{.HOST}}:~/.config/nixos/
 
@@ -29,12 +29,21 @@ tasks:
     desc: "Sync + rebuild on MAC (uses --impure)"
     cmds:
       - task: sync:mac
-      - ssh.exe {{.SSH_USER}}@{{.MAC_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#mac --impure'
+      - ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.MAC_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#mac --impure'
 
   rollback:mac:
     desc: "Rollback MAC to previous gen (remote)"
     cmds:
-      - ssh.exe {{.SSH_USER}}@{{.MAC_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+      - ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.MAC_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+
+  reboot:mac:
+    desc: "Reboot MAC now"
+    cmds:
+      - |
+        ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.MAC_HOST}} \
+          'nohup sudo /run/current-system/sw/bin/reboot >/dev/null 2>&1 & disown || nohup sudo reboot >/dev/null 2>&1 & disown'
+      # reboot closes the SSH session; don't fail the task because of disconnects
+      - "exit 0"
 
   # ---- DELL (x86_64) ----
   sync:dell:
@@ -47,12 +56,20 @@ tasks:
     desc: "Sync + rebuild on DELL"
     cmds:
       - task: sync:dell
-      - ssh.exe {{.SSH_USER}}@{{.DELL_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#dell'
+      - ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.DELL_HOST}} 'sudo nixos-rebuild switch --flake ~/.config/nixos#dell'
 
   rollback:dell:
     desc: "Rollback DELL to previous gen (remote)"
     cmds:
-      - ssh.exe {{.SSH_USER}}@{{.DELL_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+      - ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.DELL_HOST}} 'sudo /run/current-system/bin/switch-to-configuration rollback'
+
+  reboot:dell:
+    desc: "Reboot DELL now"
+    cmds:
+      - |
+        ssh.exe {{.SSH_OPTS}} {{.SSH_USER}}@{{.DELL_HOST}} \
+          'nohup sudo /run/current-system/sw/bin/reboot >/dev/null 2>&1 & disown || nohup sudo reboot >/dev/null 2>&1 & disown'
+      - "exit 0"
 
   # ---- Both ----
   sync:
@@ -66,3 +83,7 @@ tasks:
   rollback:
     desc: "Rollback both hosts"
     deps: [rollback:mac, rollback:dell]
+
+  reboot:
+    desc: "Reboot both hosts"
+    deps: [reboot:mac, reboot:dell]

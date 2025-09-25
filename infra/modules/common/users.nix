@@ -33,19 +33,6 @@ in
     ];
   };
 
-
-
-  # make newuidmap/newgidmap setuid
-  security.wrappers.newuidmap = {
-    source = "${pkgs.shadow}/bin/newuidmap";
-    owner = "root"; group = "root"; setuid = true;
-  };
-  security.wrappers.newgidmap = {
-    source = "${pkgs.shadow}/bin/newgidmap";
-    owner = "root"; group = "root"; setuid = true;
-  };
-  
   # Allow unprivileged user namespaces (belt & suspenders)
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
-
 }

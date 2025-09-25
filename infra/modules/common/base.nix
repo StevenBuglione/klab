@@ -30,26 +30,22 @@
     curl wget rsync
     iproute2 iputils
     vim htop git openssh 
-    docker
-    slirp4netns
-    fuse-overlayfs
     ethtool usbutils pciutils
-    shadow
   ];
 
   environment.etc."gai.conf".text = ''
     precedence ::ffff:0:0/96  100
   '';
-
-  virtualisation.docker.rootless = {
+  
+  # Docker Configuration
+  klab.hummingbot.docker = {
     enable = true;
-    setSocketVariable = true;
+    mode = "rootful";
   };
 
-  # ensure rootful units don't start
-  virtualisation.docker.enable = lib.mkForce false;
-  systemd.services.docker.enable = lib.mkForce false;
-  systemd.sockets.docker.enable  = lib.mkForce false;
+  ## Docker Swarm Ports
+  networking.firewall.allowedTCPPorts = [ 2377 7946 ];
+  networking.firewall.allowedUDPPorts = [ 7946 4789 ];
 
 
   boot.loader.timeout = 5;
