@@ -150,6 +150,14 @@
     };
   };
 
+  # Dedicated database storage on the external 3.6T drive.
+  fileSystems."/srv/dbdata" = {
+    device = "/dev/disk/by-uuid/91701bc4-9342-4a51-a8e6-3fc3ae14d939";
+    fsType = "ext4";
+    options = [ "noatime" "nodiratime" ];
+    neededForBoot = false;
+  };
+
 
   users.users.sbuglione.extraGroups = [ "wheel" ];
 
