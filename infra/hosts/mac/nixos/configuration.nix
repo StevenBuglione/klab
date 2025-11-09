@@ -5,7 +5,7 @@
     ./apple-silicon-support
   ];
 
-  klab.laptopAsServer.enable = false;  # it's a desktop-style server; flip if needed
+  olab.laptopAsServer.enable = false;  # it's a desktop-style server; flip if needed
 
   boot.loader = {
     efi.canTouchEfiVariables = false;
@@ -19,7 +19,7 @@
     };
   };
 
-  klab.network = {
+  olab.network = {
     hostName = "mac";
     useNetworkManager = false;         # simple static
     dhcp = false;
@@ -34,10 +34,9 @@
   };
 
 
-  users.users.hummingbot.extraGroups = [ "wheel" ];
+  users.users.sbuglione.extraGroups = [ "wheel" ];
 
   
   system.autoUpgrade.flags = [ "--update-input" "nixpkgs" "--commit-lock-file" "--impure" ];
   system.stateVersion = "25.11";
 }
-

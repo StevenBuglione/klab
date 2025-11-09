@@ -3,7 +3,7 @@ let
   inherit (lib) mkOption mkEnableOption types mkIf mkMerge;
 in
 {
-  options.klab.network = {
+  options.olab.network = {
     hostName = mkOption {
       type = types.str;
       default = "nixos";
@@ -37,30 +37,30 @@ in
 
   config = mkMerge [
     {
-      networking.hostName = config.klab.network.hostName;
+      networking.hostName = config.olab.network.hostName;
     }
 
     # NetworkManager path
-    (mkIf config.klab.network.useNetworkManager {
+    (mkIf config.olab.network.useNetworkManager {
       networking.networkmanager.enable = true;
       # If you still want DHCP via NM, leave static.disable
-      networking.useDHCP = config.klab.network.dhcp;
+      networking.useDHCP = config.olab.network.dhcp;
     })
 
     # Non-NM path (basic networking.*)
-    (mkIf (!config.klab.network.useNetworkManager) {
-      networking.useDHCP = config.klab.network.dhcp;
+    (mkIf (!config.olab.network.useNetworkManager) {
+      networking.useDHCP = config.olab.network.dhcp;
     })
 
     # Static helper (applies regardless of NM off/on; useful for servers without NM)
-    (mkIf config.klab.network.static.enable {
+    (mkIf config.olab.network.static.enable {
       networking.useDHCP = false;
-      networking.interfaces.${config.klab.network.static.interface}.ipv4.addresses = [{
-        address = config.klab.network.static.address;
-        prefixLength = config.klab.network.static.prefixLength;
+      networking.interfaces.${config.olab.network.static.interface}.ipv4.addresses = [{
+        address = config.olab.network.static.address;
+        prefixLength = config.olab.network.static.prefixLength;
       }];
-      networking.defaultGateway = config.klab.network.static.gateway;
-      networking.nameservers = config.klab.network.static.nameservers;
+      networking.defaultGateway = config.olab.network.static.gateway;
+      networking.nameservers = config.olab.network.static.nameservers;
     })
   ];
 }

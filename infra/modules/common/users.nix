@@ -17,7 +17,7 @@ in
   };
 
 
-  users.users.hummingbot = {
+  users.users.sbuglione = {
     isNormalUser = true;
     description = "Steven Buglione";
     shell = defaultShell;

@@ -1,16 +1,16 @@
 { config, lib, pkgs, ... }:
 let
   inherit (lib) mkEnableOption mkOption types mkIf mkMerge optionals mkAfter mkDefault;
-  cfg = config.klab.hummingbot.docker;
+  cfg = config.olab.hummingbot.docker;
 in
 {
-  options.klab.hummingbot.docker = {
+  options.olab.hummingbot.docker = {
     enable = mkEnableOption "Install and configure Docker for Hummingbot with secure defaults";
 
     # Which account will be running Hummingbot containers
     user = mkOption {
       type = types.str;
-      default = "hummingbot";
+      default = "sbuglione";
       description = "Primary user that will run Hummingbot containers.";
     };
 

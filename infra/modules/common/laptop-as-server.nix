@@ -3,10 +3,10 @@ let
   inherit (lib) mkEnableOption mkIf;
 in
 {
-  options.klab.laptopAsServer.enable =
+  options.olab.laptopAsServer.enable =
     mkEnableOption "keep the laptop running when the lid is closed";
 
-  config = mkIf config.klab.laptopAsServer.enable {
+  config = mkIf config.olab.laptopAsServer.enable {
     services.logind = {
       lidSwitch = "ignore";
       lidSwitchDocked = "ignore";

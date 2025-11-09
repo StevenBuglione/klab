@@ -1,5 +1,5 @@
 {
-  description = "KLab NixOS flake for modular multi-host setups (Dell x86_64 & Mac Apple Silicon)";
+  description = "olab NixOS flake for modular multi-host setups (Dell x86_64 & Mac Apple Silicon)";
 
   nixConfig = {
     experimental-features = [ "nix-command" "flakes" ];

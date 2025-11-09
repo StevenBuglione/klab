@@ -38,7 +38,7 @@
   '';
   
   # Docker Configuration
-  klab.hummingbot.docker = {
+  olab.hummingbot.docker = {
     enable = true;
     mode = "rootful";
   };

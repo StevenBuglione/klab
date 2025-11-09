@@ -2,14 +2,14 @@
 {
   imports = [ ./hardware-configuration.nix ];
 
-  klab.laptopAsServer.enable = true;
+  olab.laptopAsServer.enable = true;
   
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
 
   # Static IP on the Dell
-  klab.network = {
+  olab.network = {
     hostName = "dell";
     useNetworkManager = false;     # static via base networking
     dhcp = false;
@@ -24,7 +24,7 @@
   };
 
   # Extend user groups specific to Dell
-  users.users.hummingbot.extraGroups = [ "wheel"];
+  users.users.sbuglione.extraGroups = [ "wheel"];
 
   # USB NIC / power server extras (unchanged from before)
   hardware.enableAllFirmware = true;

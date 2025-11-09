@@ -1,4 +1,4 @@
-# KLab NixOS flake
+# olab NixOS flake
 
 This repository now includes a flake that wraps the existing NixOS configurations without changing their behavior. You can evaluate, build, and switch per host with a stable, pinned nixpkgs.
 
